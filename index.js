@@ -1,6 +1,7 @@
-
+const jsonrpc = require('jsonrpc-lite')
 const fs = require('fs')
 const http = require('http')
+
 const express = require('express')
 const app = express()
 
@@ -9,37 +10,34 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-const { Client } = require('pg')
-const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'phonebook',
-    password: '1234',
-    port: 5432
+const {login} = require("./scripts/Login-server")
+
+
+
+
+app.post('/api/v1.0', async function(req, res) {
+   try {
+       var method = req.body.method;
+       var params = req.body.params;
+       var id = req.body.id;
+
+
+       let result;
+       if (method === 'person.signin') {
+           result = await login(id, params.login, params.password, res)
+       } else {
+           result = jsonrpc.error(id, jsonrpc.JsonRpcError.methodNotFound(''))
+       }
+
+       res.header("Content-type", 'application/json')
+       res.send(result.serialize())
+   } catch (e) {
+       console.log(e);
+   }
 });
-client.connect()
-client.query('SELECT * FROM "Phone"', [], (err, res) => {
-    console.log(err ? err.stack : res) // Hello World!
-    client.end()
-})
-
-
 
 
 app.use('/', express.static(__dirname + '/static'))
-
-
-
-app.post('/api/books', function(req, res) {
-    var method  = req.body.method;
-    var params  = req.body.params;
-    var id      = req.body.id;
-
-
-
-    res.send()
-
-});
 
 
 app.get('/', function (req, res) {

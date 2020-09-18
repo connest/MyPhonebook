@@ -399,23 +399,29 @@ let _signin = document.getElementById("_signin");
 let _signup = document.getElementById("_signup");
 let _login = document.getElementById("_login");
 let _password = document.getElementById("_password");
+let _error = document.getElementById("_error");
 
 _signin.onclick = function (e) {
-  /*sendJSONRPC('api/books', "person.get",{
-    login: _login.innerText,
-    password: _password.innerText
-  }, function (response) {
-    alert(response);
-  });*/
-  sendJSONRPC('api/books', "person.get",{
-    login: _login.value,
+  sendJSONRPC('/api/v1.0', "person.signin",{
+    login:    _login.value,
     password: _password.value
   }, function (response) {
-    alert(response);
+    const result = jsonrpc.parse(response);
+    console.log(result);
+    if(result.payload.result)
+    {
+      if(result.payload.result.isLogined) {
+        //TODO move to phonesbook page
+      }
+      else {
+        _error.innerText = 'Cannot sign in. Please, check you login and password';
+      }
+    }
   });
 };
 
-_signup.onclick = function (e) {//TODO move to registration
+_signup.onclick = function (e) {
+  window.location.href = '/registration.html'
 };
 
 },{"jsonrpc-lite":1}]},{},[2]);
