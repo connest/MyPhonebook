@@ -1,0 +1,23 @@
+{
+  "name": "myexpress",
+  "version": "1.0.0",
+  "description": "My first express package",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Connest",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "jsonrpc-lite": "^2.2.0",
+    "pg": "^8.3.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "nodemon": "^2.0.4"
+  }
+}
