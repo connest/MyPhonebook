@@ -27,6 +27,10 @@ function refreshContacts() {
     });
 }
 
+function moveToConctact(idContact) {
+    window.location.href = '/contact/' + idContact
+}
+
 function delete_contact(idContact) {
     rpc_send('/api/v1.0', 'contact.delete', {
         contactId: idContact,
@@ -60,8 +64,9 @@ function add_contact(contact) {
     surname_div.innerText = contact.surname;
     delete_button.innerText = 'X';
 
-    delete_button.onclick = delete_contact.bind(contact.id_contact);
-
+    delete_button.onclick = delete_contact.bind(this, Number(contact.id_contact));
+    name_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
+    surname_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
 
     cont.insertAdjacentElement('beforeend', name_div);
     cont.insertAdjacentElement('beforeend', surname_div);
