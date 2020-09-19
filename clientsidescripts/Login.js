@@ -25,14 +25,17 @@ _signin.onclick = function()
             const result = parsedResponse.payload.result
 
             if(result.isLogined) {
-                //TODO goto phonebook page
-                alert("LOGINED")
+                window.location.href = '/Phonebook.html';
             } else {
-                alert("FAIL")
                 _error.innerText = 'Cannot sign in. Please check your login and password'
             }
         } catch (e) {
             console.warn(e);
         }
     });
+}
+
+_signup.onclick = function ()
+{
+    window.location.href = "/Registration.html"
 }
