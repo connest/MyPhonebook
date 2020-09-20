@@ -20,6 +20,11 @@ _signup.onclick = function () {
         _error_message.MaterialSnackbar.showSnackbar(data);
         return ;
     }
+    if(!_password.validity.valid) {
+        const data = {message: 'Password too easy'};
+        _error_message.MaterialSnackbar.showSnackbar(data);
+        return ;
+    }
 
     rpc_send('/api/v1.0', 'person.singup', {
         login: _login.value,

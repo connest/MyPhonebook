@@ -3,27 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Create contact</title>
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <script src="/css/material/material.min.js"></script>
+    <link rel="stylesheet" href="/css/material/font.css">
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <link rel="stylesheet" href="/css/CreateContact.css">
 </head>
 <body>
-<label>Name</label>
-<input type="text" id="_name">
-<br/>
+<div>
+    <div id="_name_part">
+        <div>
+            <label>Name</label>
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="_name">
+                <label class="mdl-textfield__label" for="_name">Name</label>
+            </div>
+        </div>
+        <div>
+            <label>Surname</label>
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="_surname">
+                <label class="mdl-textfield__label" for="_surname">Surname</label>
+            </div>
+        </div>
+        <div>
+            <button id="_cancel" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Cancel</button>
+            <button id="_add_contact" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Create contact</button>
+        </div>
+    </div>
+    <div>
+        <div>
+            Phones:
+            <button id="_add_phone" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                <i class="material-icons">add</i>
+            </button>
+            <ul id="_phones" class="mdl-list"></ul>
+        </div>
+    </div>
 
-<label>Surname</label>
-<input type="text" id="_surname">
-<br/>
 
-<div id="_phones">
-    Phones:
 </div>
-<button id="_add_phone">+</button>
-
-<br><br>
-
-<button id="_cancel">Cancel</button>
-<button id="_add_contact">Create contact</button>
-<br>
-<button id="_logout">Logout</button>
+<img src="/images/exit.png" alt="Logout" id="_logout" title="Logout">
+<div id="_error_message" aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar mdl-color--red">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
 </body>
 <script src="/scripts/createContact.js"></script>
 </html>

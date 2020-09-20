@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Phonebook</title>
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <script src="/css/material/material.min.js"></script>
+    <link rel="stylesheet" href="/css/material/font.css">
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <link rel="stylesheet" href="/css/Phonebook.css">
 </head>
 <body>
-<div>Your contacts</div>
-<ul id="_contacts"></ul>
-<button id="_add_contact">Add</button>
-
-<br>
-<button id="_logout">Logout</button>
+<div>
+    <h4>Your contacts</h4>
+    <ul id="_contacts" class="mdl-list"></ul>
+    <div>
+        <button id="_add_contact" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">add</i>
+        </button>
+    </div>
+</div>
+<img src="/images/exit.png" alt="Logout" id="_logout">
 </body>
 <script src="/scripts/phonebook.js"></script>
 </html>

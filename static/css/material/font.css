@@ -3,13 +3,13 @@
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url("/material/font.woff2") format('woff2');
+    src: url("/css/material/font.woff2") format('woff2');
 }
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    src: url("/material/Roboto-Regular.ttf") format('ttf');
+    src: url("/css/material/Roboto-Regular.ttf") format('ttf');
 }
 
 .material-icons {

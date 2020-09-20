@@ -3,23 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Contact profile</title>
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <script src="/css/material/material.min.js"></script>
+    <link rel="stylesheet" href="/css/material/font.css">
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <link rel="stylesheet" href="/css/Contact.css">
 </head>
 <body>
-<img width="200px" src="/images/profile.jpg" alt="Profile icon">
-<br>
-<label id="_name"></label>
-<br>
-<label id="_surname"></label>
-<br>
-<ul id="_phones"></ul>
-<br>
-<input type="text" id="_new_phone">
-<button id="_add_phone">Add phone number</button>
-<br>
-<br>
-<button id="_delete_contact">Delete this contact</button>
-<br>
-<button id="_logout">Logout</button>
+<div>
+    <div id="_profile_icon">
+        <img src="/images/profile.jpg" alt="Profile icon">
+    </div>
+    <div>
+        <h4 id="_name"></h4>
+
+    </div>
+    <div>
+        <h4 id="_surname"></h4>
+
+    </div>
+    <div>
+        <ul id="_phones"></ul>
+    </div>
+    <div id="_add_phone_div">
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="text" id="_new_phone" pattern='[0-9\-\(\)\+\s]{9,22}'>
+            <label class="mdl-textfield__label" for="_new_phone">+0 (000) 000-00-00</label>
+            <span class="mdl-textfield__error">Wrong phone number</span>
+        </div>
+        <button id="_add_phone" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Add</button>
+    </div>
+        <button title="Delete this contact" id="_delete_contact" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">delete</i>
+        </button>
+</div>
+<img src="/images/exit.png" alt="Logout" id="_logout" title="Logout">
+<div id="_error_message" aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar mdl-color--red">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
 </body>
 <script src="/scripts/contact.js"></script>
 </html>

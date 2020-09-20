@@ -1,0 +1,50 @@
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+body > div {
+    margin-top: 30vh;
+    max-width: 960px;
+    display: flex;
+
+}
+body > div > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+body > div > div > div {
+    width:  100%;
+}
+
+ul {
+    padding: 0;
+}
+#_name_part {
+    margin-right: 50px;
+}
+
+#_name_part > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#_name_part > div > label {
+    width: 30%;
+}
+
+#_phones {
+    max-height: 30vh;
+    overflow-y: auto;
+}
+#_logout {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 25px;
+}
+#_add_phone {
+    transform: scale(0.5) translateX(-25px);
+}

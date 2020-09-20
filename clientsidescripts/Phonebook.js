@@ -1,4 +1,4 @@
-const { signinIfNotLogined, logout } = require('./IsLogined')
+const {signinIfNotLogined, logout} = require('./IsLogined')
 const {rpc_send} = require('./JsonRpcAjax')
 const jsonrpc = require('jsonrpc-lite')
 
@@ -56,26 +56,39 @@ function delete_contact(idContact) {
     });
 }
 
-
 function add_contact(contact) {
-    var cont = document.createElement('li');
-    var name_div = document.createElement('div');
-    var surname_div = document.createElement('div');
-    var delete_button = document.createElement('button');
+    const contact_list_element = document.createElement('li');
+    const contact_name = document.createElement('span');
+    const contact_icon = document.createElement('i');
 
-    name_div.innerText = contact.name;
-    surname_div.innerText = contact.surname;
-    delete_button.innerText = 'X';
+    const contact_delete_button = document.createElement('a');
+    const contact_delete_button_icon = document.createElement('i');
 
-    delete_button.onclick = delete_contact.bind(this, Number(contact.id_contact));
-    name_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
-    surname_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
+    contact_list_element.className = 'mdl-list__item'
+    contact_name.className = 'mdl-list__item-primary-content'
+    contact_icon.className = 'material-icons mdl-list__item-icon'
+    contact_delete_button.className = 'mdl-list__item-secondary-action'
+    contact_delete_button_icon.className = 'material-icons'
 
-    cont.insertAdjacentElement('beforeend', name_div);
-    cont.insertAdjacentElement('beforeend', surname_div);
-    cont.insertAdjacentElement('beforeend', delete_button);
+    contact_icon.innerText = 'person'
+    contact_delete_button_icon.innerText = 'delete'
+    contact_name.innerHTML += contact.name + ' ' + contact.surname;
 
-    _contacts.insertAdjacentElement('beforeend', cont);
+    contact_delete_button.onclick = function (event) {
+        event.stopPropagation()
+        delete_contact(Number(contact.id_contact));
+    }
+
+
+    contact_list_element.onclick = moveToConctact.bind(this, Number(contact.id_contact));
+
+
+    contact_delete_button.insertAdjacentElement('beforeend', contact_delete_button_icon)
+    contact_list_element.insertAdjacentElement('beforeend', contact_icon)
+    contact_list_element.insertAdjacentElement('beforeend', contact_name)
+    contact_list_element.insertAdjacentElement('beforeend', contact_delete_button)
+    _contacts.insertAdjacentElement('beforeend', contact_list_element);
+
 }
 
 
@@ -84,7 +97,7 @@ _add_contact.onclick = function () {
 }
 _logout.onclick = logout;
 
-window.onload = function() {
+window.onload = function () {
     signinIfNotLogined();
     refreshContacts();
 }

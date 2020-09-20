@@ -48,7 +48,38 @@ function delete_phone(phoneId) {
 }
 
 function showContactPhone(phone) {
-    const phone_container = document.createElement('li')
+    const phone_list_element = document.createElement('li');
+    const phone_number = document.createElement('span');
+    const phone_icon = document.createElement('i');
+
+    const phone_delete_button = document.createElement('a');
+    const phone_delete_button_icon = document.createElement('i');
+
+    phone_list_element.className = 'mdl-list__item'
+    phone_number.className = 'mdl-list__item-primary-content'
+    phone_icon.className = 'material-icons mdl-list__item-icon'
+    phone_delete_button.className = 'mdl-list__item-secondary-action'
+    phone_delete_button_icon.className = 'material-icons'
+
+    phone_icon.innerText = 'phone'
+    phone_delete_button_icon.innerText = 'delete'
+    phone_number.innerText = phone.phone_number
+
+    phone_delete_button.onclick = function (event) {
+        event.stopPropagation()
+        delete_phone(Number(phone.id_phone));
+    }
+
+
+
+
+    phone_delete_button.insertAdjacentElement('beforeend', phone_delete_button_icon)
+    phone_list_element.insertAdjacentElement('beforeend', phone_icon)
+    phone_list_element.insertAdjacentElement('beforeend', phone_number)
+    phone_list_element.insertAdjacentElement('beforeend', phone_delete_button)
+    _phones.insertAdjacentElement('beforeend', phone_list_element);
+
+    /*const phone_container = document.createElement('li')
     const phone_number = document.createElement('div')
     const delete_button = document.createElement('button')
 
@@ -60,7 +91,7 @@ function showContactPhone(phone) {
     phone_container.insertAdjacentElement('beforeend', phone_number)
     phone_container.insertAdjacentElement('beforeend', delete_button)
 
-    _phones.insertAdjacentElement('beforeend', phone_container)
+    _phones.insertAdjacentElement('beforeend', phone_container)*/
 }
 
 function showContact(name, surname, phones) {
@@ -96,8 +127,19 @@ function getContact() {
     });
 }
 
-
+function checkPhoneValidation() {
+    return _new_phone.validity.valid && _new_phone.value !== ''
+}
 function addPhone() {
+
+    if(!checkPhoneValidation())
+    {
+        const data = {message: 'Phone must be valid!'};
+        _error_message.MaterialSnackbar.showSnackbar(data);
+        return ;
+    }
+
+
     const phone_number = _new_phone.value;
     rpc_send('/api/v1.0', 'phone.add', {
         contactId: getCurrentId(),
