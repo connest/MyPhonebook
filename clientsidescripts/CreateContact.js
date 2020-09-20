@@ -1,3 +1,4 @@
+const { signinIfNotLogined, logout } = require('./IsLogined')
 const jsonrpc = require('jsonrpc-lite');
 const { rpc_send } = require('./JsonRpcAjax');
 
@@ -7,6 +8,7 @@ const _phones = document.getElementById('_phones')
 const _add_phone = document.getElementById('_add_phone')
 const _cancel = document.getElementById('_cancel')
 const _add_contact = document.getElementById('_add_contact')
+const _logout = document.getElementById('_logout')
 
 function createPhoneNumber()
 {
@@ -76,5 +78,9 @@ _add_phone.onclick = createPhoneNumber;
 _cancel.onclick = function () {
     window.history.back();
 }
+_logout.onclick = logout
 
-window.onload = createPhoneNumber;
+window.onload = function () {
+    signinIfNotLogined();
+    createPhoneNumber();
+}

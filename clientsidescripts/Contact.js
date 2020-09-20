@@ -1,3 +1,4 @@
+const { signinIfNotLogined, logout } = require('./IsLogined')
 const {rpc_send} = require('./JsonRpcAjax')
 const jsonrpc = require('jsonrpc-lite')
 
@@ -7,6 +8,7 @@ const _phones = document.getElementById('_phones')
 const _new_phone = document.getElementById('_new_phone')
 const _add_phone = document.getElementById('_add_phone')
 const _delete_contact = document.getElementById('_delete_contact')
+const _logout = document.getElementById('_logout')
 
 
 function getUrlVars() {
@@ -144,7 +146,8 @@ function deleteThisContact() {
 
 _delete_contact.onclick = deleteThisContact;
 _add_phone.onclick = addPhone;
-
+_logout.onclick = logout;
 window.onload = function () {
+    signinIfNotLogined();
     getContact();
 }

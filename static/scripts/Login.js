@@ -1,4 +1,36 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+// function isLogined() {
+//     if(!getCookie('userId'))
+//         window.location.href = '/Login.html'
+// }
+function isLogined() {
+    return Boolean(getCookie('userId'))
+}
+function moveToSignin() {
+    window.location.href = '/Login.html'
+}
+function signinIfNotLogined() {
+    if(!isLogined())
+        window.location.href = '/Login.html'
+}
+function logout() {
+    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+    window.location.href = '/Login.html'
+}
+
+module.exports.isLogined = isLogined;
+module.exports.moveToSignin = moveToSignin;
+module.exports.logout = logout;
+module.exports.signinIfNotLogined = signinIfNotLogined;
+},{}],2:[function(require,module,exports){
 const jsonrpc = require('jsonrpc-lite')
 
 
@@ -39,7 +71,8 @@ module.exports.rpc_send = rpc_send;
 
 
 
-},{"jsonrpc-lite":3}],2:[function(require,module,exports){
+},{"jsonrpc-lite":4}],3:[function(require,module,exports){
+const { isLogined } = require('./IsLogined')
 const jsonrpc = require('jsonrpc-lite')
 const { rpc_send } = require('./JsonRpcAjax');
 
@@ -82,7 +115,11 @@ _signup.onclick = function ()
     window.location.href = "/Registration.html"
 }
 
-},{"./JsonRpcAjax":1,"jsonrpc-lite":3}],3:[function(require,module,exports){
+window.onload = function () {
+    if(isLogined())
+        window.location.href = '/Phonebook.html'
+}
+},{"./IsLogined":1,"./JsonRpcAjax":2,"jsonrpc-lite":4}],4:[function(require,module,exports){
 // **Github:** https://github.com/teambition/jsonrpc-lite
 //
 // http://www.jsonrpc.org/specification
@@ -458,4 +495,4 @@ const jsonrpc = {
 exports.jsonrpc = jsonrpc;
 exports.default = jsonrpc;
 
-},{}]},{},[2]);
+},{}]},{},[3]);

@@ -1,8 +1,10 @@
+const { signinIfNotLogined, logout } = require('./IsLogined')
 const {rpc_send} = require('./JsonRpcAjax')
 const jsonrpc = require('jsonrpc-lite')
 
 const _contacts = document.getElementById('_contacts')
 const _add_contact = document.getElementById('_add_contact')
+const _logout = document.getElementById('_logout')
 
 function refreshContacts() {
     rpc_send('/api/v1.0', 'contact.get', {
@@ -76,7 +78,12 @@ function add_contact(contact) {
 }
 
 
-window.onload = refreshContacts;
 _add_contact.onclick = function () {
     window.location.href = '/CreateContact.html'
+}
+_logout.onclick = logout;
+
+window.onload = function() {
+    signinIfNotLogined();
+    refreshContacts();
 }

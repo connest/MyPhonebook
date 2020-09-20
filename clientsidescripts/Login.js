@@ -1,3 +1,4 @@
+const { isLogined } = require('./IsLogined')
 const jsonrpc = require('jsonrpc-lite')
 const { rpc_send } = require('./JsonRpcAjax');
 
@@ -38,4 +39,9 @@ _signin.onclick = function()
 _signup.onclick = function ()
 {
     window.location.href = "/Registration.html"
+}
+
+window.onload = function () {
+    if(isLogined())
+        window.location.href = '/Phonebook.html'
 }
