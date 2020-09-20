@@ -14,8 +14,8 @@ app.use(cookieParser());
 
 const { login } = require("./serversidescripts/Login-server")
 const { registration } = require("./serversidescripts/Registration-server")
-const { getContacts, deleteContact, createContact } = require("./serversidescripts/Phonebook-server")
-
+const { getContacts, getContactData, deleteContact, createContact} = require("./serversidescripts/Phonebook-server")
+const { deletePhone, addPhone } = require("./serversidescripts/Phone-server")
 
 
 
@@ -35,8 +35,14 @@ app.post('/api/v1.0', async function(req, res) {
            result = await getContacts(id, req.cookies.userId, params.limit, params.offset);
        } else if(method === 'contact.delete') {
            result = await deleteContact(id, params.contactId);
-       }  else if(method === 'contact.create') {
+       } else if(method === 'contact.create') {
            result = await createContact(id, req.cookies.userId, params.name, params.surname, params.phones);
+       } else if(method === 'contact.getWithPhones') {
+           result = await getContactData(id, params.id);
+       } else if(method === 'phone.delete') {
+           result = await deletePhone(id, params.phoneId);
+       } else if(method === 'phone.add') {
+           result = await addPhone(id, params.contactId, params.phone);
        } else {
            result = jsonrpc.error(id, jsonrpc.JsonRpcError.methodNotFound(''))
        }

@@ -1,4 +1,4 @@
-const { rpc_send } = require('./JsonRpcAjax')
+const {rpc_send} = require('./JsonRpcAjax')
 const jsonrpc = require('jsonrpc-lite')
 
 const _contacts = document.getElementById('_contacts')
@@ -9,7 +9,7 @@ function refreshContacts() {
         limit: 0,
         offset: 0
     }).then((response) => {
-        if(!response) {
+        if (!response) {
             console.warn("response is not recognized");
             return;
         }
@@ -28,14 +28,14 @@ function refreshContacts() {
 }
 
 function moveToConctact(idContact) {
-    window.location.href = '/contact/' + idContact
+    window.location.href = '/Contact.html?id=' + idContact
 }
 
 function delete_contact(idContact) {
     rpc_send('/api/v1.0', 'contact.delete', {
         contactId: idContact,
     }).then((response) => {
-        if(!response) {
+        if (!response) {
             console.warn("response is not recognized");
             return;
         }
@@ -44,8 +44,8 @@ function delete_contact(idContact) {
             const parsedResponse = jsonrpc.parse(response + '');
             const result = parsedResponse.payload.result
 
-            console.log(result)
-            refreshContacts();
+            if (result.isDeleted)
+                refreshContacts();
 
         } catch (e) {
             console.warn(e);

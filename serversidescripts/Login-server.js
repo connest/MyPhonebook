@@ -32,6 +32,7 @@ async function login(username, password)
         return -1;
     } catch (err) {
         console.log(err.stack)
+        client.end();
         return -1;
     }
 

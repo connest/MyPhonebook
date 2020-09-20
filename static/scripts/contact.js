@@ -1,4 +1,155 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const {rpc_send} = require('./JsonRpcAjax')
+const jsonrpc = require('jsonrpc-lite')
+
+const _name = document.getElementById('_name')
+const _surname = document.getElementById('_surname')
+const _phones = document.getElementById('_phones')
+const _new_phone = document.getElementById('_new_phone')
+const _add_phone = document.getElementById('_add_phone')
+const _delete_contact = document.getElementById('_delete_contact')
+
+
+function getUrlVars() {
+    var vars = {};
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function getCurrentId() {
+    return getUrlVars()['id']
+}
+
+function delete_phone(phoneId) {
+    rpc_send('/api/v1.0', 'phone.delete', {
+        phoneId: phoneId
+    }).then((response) => {
+        if (!response) {
+            console.warn("response is not recognized");
+            return;
+        }
+
+        try {
+            const parsedResponse = jsonrpc.parse(response + '');
+            const result = parsedResponse.payload.result
+
+
+            if (result.isDeleted)
+                getContact();
+
+        } catch (e) {
+            console.warn(e);
+        }
+    });
+}
+
+function showContactPhone(phone) {
+    const phone_container = document.createElement('li')
+    const phone_number = document.createElement('div')
+    const delete_button = document.createElement('button')
+
+    phone_number.innerText = phone.phone_number;
+
+    delete_button.innerText = 'X'
+    delete_button.onclick = delete_phone.bind(this, phone.id_phone)
+
+    phone_container.insertAdjacentElement('beforeend', phone_number)
+    phone_container.insertAdjacentElement('beforeend', delete_button)
+
+    _phones.insertAdjacentElement('beforeend', phone_container)
+}
+
+function showContact(name, surname, phones) {
+    _name.innerText = name;
+    _surname.innerText = surname;
+
+    _phones.innerHTML = ''
+    if (phones) {
+        for (let phone of phones) {
+            showContactPhone(phone);
+        }
+    }
+}
+
+function getContact() {
+    rpc_send('/api/v1.0', 'contact.getWithPhones', {
+        id: getCurrentId()
+    }).then((response) => {
+        if (!response) {
+            console.warn("response is not recognized");
+            return;
+        }
+
+        try {
+            const parsedResponse = jsonrpc.parse(response + '');
+            const result = parsedResponse.payload.result
+
+            showContact(result.name, result.surname, result.phones)
+
+        } catch (e) {
+            console.warn(e);
+        }
+    });
+}
+
+
+function addPhone() {
+    const phone_number = _new_phone.value;
+    rpc_send('/api/v1.0', 'phone.add', {
+        contactId: getCurrentId(),
+        phone: phone_number
+    }).then((response) => {
+        if (!response) {
+            console.warn("response is not recognized");
+            return;
+        }
+
+        try {
+            const parsedResponse = jsonrpc.parse(response + '');
+            const result = parsedResponse.payload.result
+
+            if(result.isAdded)
+                getContact();
+
+        } catch (e) {
+            console.warn(e);
+        }
+    });
+}
+
+function deleteThisContact() {
+    rpc_send('/api/v1.0', 'contact.delete', {
+        contactId: getCurrentId(),
+    }).then((response) => {
+        if(!response) {
+            console.warn("response is not recognized");
+            return;
+        }
+
+        try {
+            const parsedResponse = jsonrpc.parse(response + '');
+            const result = parsedResponse.payload.result
+
+            if(result.isDeleted)
+            {
+                window.history.back();
+            }
+
+        } catch (e) {
+            console.warn(e);
+        }
+    });
+}
+
+_delete_contact.onclick = deleteThisContact;
+_add_phone.onclick = addPhone;
+
+window.onload = function () {
+    getContact();
+}
+},{"./JsonRpcAjax":2,"jsonrpc-lite":3}],2:[function(require,module,exports){
 const jsonrpc = require('jsonrpc-lite')
 
 
@@ -39,90 +190,7 @@ module.exports.rpc_send = rpc_send;
 
 
 
-},{"jsonrpc-lite":3}],2:[function(require,module,exports){
-const { rpc_send } = require('./JsonRpcAjax')
-const jsonrpc = require('jsonrpc-lite')
-
-const _contacts = document.getElementById('_contacts')
-const _add_contact = document.getElementById('_add_contact')
-
-function refreshContacts() {
-    rpc_send('/api/v1.0', 'contact.get', {
-        limit: 0,
-        offset: 0
-    }).then((response) => {
-        if(!response) {
-            console.warn("response is not recognized");
-            return;
-        }
-
-        try {
-            const parsedResponse = jsonrpc.parse(response + '');
-            const result = parsedResponse.payload.result
-
-            _contacts.innerText = '';
-            result.forEach(contact => add_contact(contact));
-
-        } catch (e) {
-            console.warn(e);
-        }
-    });
-}
-
-function moveToConctact(idContact) {
-    window.location.href = '/Contact.html?id=' + idContact
-}
-
-function delete_contact(idContact) {
-    rpc_send('/api/v1.0', 'contact.delete', {
-        contactId: idContact,
-    }).then((response) => {
-        if(!response) {
-            console.warn("response is not recognized");
-            return;
-        }
-
-        try {
-            const parsedResponse = jsonrpc.parse(response + '');
-            const result = parsedResponse.payload.result
-
-            console.log(result)
-            refreshContacts();
-
-        } catch (e) {
-            console.warn(e);
-        }
-    });
-}
-
-
-function add_contact(contact) {
-    var cont = document.createElement('li');
-    var name_div = document.createElement('div');
-    var surname_div = document.createElement('div');
-    var delete_button = document.createElement('button');
-
-    name_div.innerText = contact.name;
-    surname_div.innerText = contact.surname;
-    delete_button.innerText = 'X';
-
-    delete_button.onclick = delete_contact.bind(this, Number(contact.id_contact));
-    name_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
-    surname_div.onclick = moveToConctact.bind(this, Number(contact.id_contact));
-
-    cont.insertAdjacentElement('beforeend', name_div);
-    cont.insertAdjacentElement('beforeend', surname_div);
-    cont.insertAdjacentElement('beforeend', delete_button);
-
-    _contacts.insertAdjacentElement('beforeend', cont);
-}
-
-
-window.onload = refreshContacts;
-_add_contact.onclick = function () {
-    window.location.href = '/CreateContact.html'
-}
-},{"./JsonRpcAjax":1,"jsonrpc-lite":3}],3:[function(require,module,exports){
+},{"jsonrpc-lite":3}],3:[function(require,module,exports){
 // **Github:** https://github.com/teambition/jsonrpc-lite
 //
 // http://www.jsonrpc.org/specification
@@ -498,4 +566,4 @@ const jsonrpc = {
 exports.jsonrpc = jsonrpc;
 exports.default = jsonrpc;
 
-},{}]},{},[2]);
+},{}]},{},[1]);
