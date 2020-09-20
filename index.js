@@ -36,6 +36,7 @@ app.post('/api/v1.0', async function(req, res) {
        } else if(method === 'contact.delete') {
            result = await deleteContact(id, params.contactId);
        } else if(method === 'contact.create') {
+           console.log("cookie: " + JSON.stringify(req.cookies))
            result = await createContact(id, req.cookies.userId, params.name, params.surname, params.phones);
        } else if(method === 'contact.getWithPhones') {
            result = await getContactData(id, params.id);

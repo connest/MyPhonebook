@@ -145,6 +145,7 @@ async function addPhones(contactId, phones)
 
 async function createContact(userId, name, surname, phones)
 {
+    console.log(userId, name, surname, phones)
     const contact = await addContact(userId, name, surname);
     if(!contact)
         return false;
@@ -173,7 +174,7 @@ async function getContactDataName(connection, contactId) {
 
     } catch(err) {
         console.log(err.stack)
-        client.end();
+        connection.end();
         return null;
     }
 }
@@ -193,7 +194,7 @@ async function getContactPhones(connection, contactId) {
 
     } catch(err) {
         console.log(err.stack)
-        client.end();
+        connection.end();
         return null;
     }
 }
@@ -228,13 +229,13 @@ async function getContactData(contactId)
 
 async function createContactProcess(id, userId, name, surname, phones)
 {
-    const contacts = await createContact(userId.id_person, name, surname, phones);
+    const contacts = await createContact(userId, name, surname, phones);
     return jsonrpc.success(id, contacts);
 }
 
 async function getContactsProcess(id, userId, limit, offset)
 {
-    const contacts = await getContacts(userId.id_person, limit, offset);
+    const contacts = await getContacts(userId, limit, offset);
     return jsonrpc.success(id, contacts);
 }
 

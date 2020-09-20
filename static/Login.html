@@ -3,21 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <script src="/css/material/material.min.js"></script>
+    <link rel="stylesheet" href="/css/material/font.css">
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <link rel="stylesheet" href="/css/Login.css">
 </head>
 <body>
+<div>
+    <div>
+        <label>Login</label>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="text" id="_login">
+            <label class="mdl-textfield__label" for="_login" >Login</label>
+        </div>
+    </div>
+    <div>
+        <label>Password</label>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="password" id="_password">
+            <label class="mdl-textfield__label" for="_password">Password</label>
+        </div>
+    </div>
+    <div>
+        <button id="_signin"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Sign in
+        </button>
+        <button id="_signup"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Sign up
+        </button>
+    </div>
 
-    <label>Login</label>
-    <input id="_login" type="text">
-    <br/>
-    <label>Password</label>
-    <input id="_password" type="password">
-    <br/>
 
-    <button id="_signin">Sign in</button>
-    <button id="_signup">Sign up</button>
+    <div id="_error_message" aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar mdl-color--red">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
 
-    <br/>
-    <label id="_error"></label>
+</div>
 
 <script src="/scripts/login.js"></script>
 

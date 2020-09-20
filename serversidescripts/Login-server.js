@@ -44,7 +44,7 @@ async function loginProcess(id, username, password, res)
     if(userId === -1) {
         return jsonrpc.success(id, {isLogined: false})
     } else {
-        res.cookie("userId", userId);
+        res.cookie("userId", userId.id_person);
         return jsonrpc.success(id, {isLogined: true});
     }
 }

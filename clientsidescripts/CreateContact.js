@@ -44,14 +44,14 @@ function getPhonesArray() {
 
 
 _add_contact.onclick = function () {
-    const resuestParams = {
+    const requestParams = {
         name: _name.value,
         surname: _surname.value,
         phones: getPhonesArray()
     }
 
-    console.log(resuestParams)
-    rpc_send('/api/v1.0', 'contact.create', resuestParams)
+    console.log(requestParams)
+    rpc_send('/api/v1.0', 'contact.create', requestParams)
         .then((response) => {
         if(!response) {
             console.warn("response is not recognized");

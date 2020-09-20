@@ -20,6 +20,7 @@ function refreshContacts() {
             const parsedResponse = jsonrpc.parse(response + '');
             const result = parsedResponse.payload.result
 
+            console.log(result)
             _contacts.innerText = '';
             result.forEach(contact => add_contact(contact));
 

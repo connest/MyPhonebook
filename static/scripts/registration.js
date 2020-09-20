@@ -12,7 +12,10 @@ function getCookie(name) {
 //         window.location.href = '/Login.html'
 // }
 function isLogined() {
-    return Boolean(getCookie('userId'))
+    userId = getCookie('userId');
+    if(!userId)
+        return false;
+    return userId != 'undefined'
 }
 function moveToSignin() {
     window.location.href = '/Login.html'
@@ -79,7 +82,7 @@ const jsonrpc = require('jsonrpc-lite')
 const _login = document.getElementById('_login')
 const _password = document.getElementById('_password')
 const _confirm_password = document.getElementById('_confirm_password')
-const _error = document.getElementById('_error')
+const _error_message = document.getElementById('_error_message')
 const _cancel = document.getElementById('_cancel')
 const _signup = document.getElementById('_signup')
 
@@ -89,7 +92,9 @@ _cancel.onclick = function () {
 
 _signup.onclick = function () {
     if(_password.value !== _confirm_password.value) {
-        _error.innerText = 'Passwords not equals';
+        // _error.innerText = 'Passwords not equals';
+        const data = {message: 'Passwords not equals'};
+        _error_message.MaterialSnackbar.showSnackbar(data);
         return ;
     }
 
@@ -109,7 +114,9 @@ _signup.onclick = function () {
             if(result.isSigned) {
                 window.location.href = '/Phonebook.html'
             } else {
-                _error.innerText = 'Cannot sign in. Login is already exists'
+                // _error.innerText = 'Cannot sign up. Login is already exists'
+                const data = {message: 'Cannot sign up. Login is already exists'};
+                _error_message.MaterialSnackbar.showSnackbar(data);
             }
         } catch (e) {
             console.warn(e);

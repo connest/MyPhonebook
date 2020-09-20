@@ -3,24 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <script src="/css/material/material.min.js"></script>
+    <link rel="stylesheet" href="/css/material/font.css">
+    <link rel="stylesheet" href="/css/material/material.min.css">
+    <link rel="stylesheet" href="/css/Registration.css">
 </head>
 <body>
-    <label>Login</label>
-    <input type="text" id="_login">
-    <br/>
+<div>
+    <div>
+        <label>Login</label>
 
-    <label>Password</label>
-    <input type="password" id="_password">
-    <br/>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="text" id="_login">
+            <label class="mdl-textfield__label" for="_login">Login</label>
+        </div>
+    </div>
+    <div>
+        <label>Password</label>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="password" id="_password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+            <label class="mdl-textfield__label" for="_password">Password</label>
+            <span class="mdl-textfield__error">Minimum eight characters, at least one letter and one number</span>
+        </div>
 
-    <label>Confirm</label>
-    <input type="password" id="_confirm_password">
-    <br/>
-    <button id="_cancel">Cancel</button>
-    <button id="_signup">Sign up</button>
-    <br>
+    </div>
+    <div>
+        <label>Confirm</label>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="password" id="_confirm_password">
+            <label class="mdl-textfield__label" for="_confirm_password">Password</label>
+        </div>
 
-    <label id="_error"></label>
+    </div>
+    <div>
+        <button id="_cancel" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Cancel</button>
+        <button id="_signup" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Sign up</button>
+    </div>
+
+    <div id="_error_message" aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar mdl-color--red">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+</div>
 </body>
 <script src="/scripts/registration.js"></script>
 </html>

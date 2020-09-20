@@ -19,14 +19,14 @@ async function loginExists(connection, username) {
 async function createPerson(connection, username, password) {
     try {
         const result = await connection.query(
-            'INSERT INTO "Person" (login, password) VALUES ($1, $2);',
+            'INSERT INTO "Person" (login, password) VALUES ($1, $2) RETURNING id_person;',
             [username, password]
         );
 
         if(result) {
             if(result.rowCount === 1) {
                 console.log(result.rows[0])
-                return result.rows[0]
+                return result.rows[0].id_person
             }
         }
         return -1;

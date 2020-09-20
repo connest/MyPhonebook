@@ -12,7 +12,10 @@ function getCookie(name) {
 //         window.location.href = '/Login.html'
 // }
 function isLogined() {
-    return Boolean(getCookie('userId'))
+    userId = getCookie('userId');
+    if(!userId)
+        return false;
+    return userId != 'undefined'
 }
 function moveToSignin() {
     window.location.href = '/Login.html'
@@ -78,9 +81,13 @@ const { rpc_send } = require('./JsonRpcAjax');
 
 const _login = document.getElementById("_login")
 const _password = document.getElementById("_password")
-const _error = document.getElementById("_error")
+const _error_message = document.getElementById("_error_message")
 const _signin = document.getElementById("_signin")
 const _signup = document.getElementById("_signup")
+
+
+
+
 
 
 
@@ -102,7 +109,10 @@ _signin.onclick = function()
             if(result.isLogined) {
                 window.location.href = '/Phonebook.html';
             } else {
-                _error.innerText = 'Cannot sign in. Please check your login and password'
+               // _error.innerText = 'Cannot sign in. Please check your login and password'
+
+                const data = {message: 'Cannot sign in. Please check your login and password'};
+                _error_message.MaterialSnackbar.showSnackbar(data);
             }
         } catch (e) {
             console.warn(e);

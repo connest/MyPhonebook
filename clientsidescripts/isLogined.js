@@ -11,7 +11,10 @@ function getCookie(name) {
 //         window.location.href = '/Login.html'
 // }
 function isLogined() {
-    return Boolean(getCookie('userId'))
+    userId = getCookie('userId');
+    if(!userId)
+        return false;
+    return userId != 'undefined'
 }
 function moveToSignin() {
     window.location.href = '/Login.html'
