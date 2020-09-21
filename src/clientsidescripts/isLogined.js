@@ -11,7 +11,7 @@ function getCookie(name) {
 //         window.location.href = '/Login.html'
 // }
 function isLogined() {
-    userId = getCookie('userId');
+    const userId = getCookie('userId');
     if(!userId)
         return false;
     return userId != 'undefined'

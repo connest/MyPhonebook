@@ -58,11 +58,8 @@ app.post('/api/v1.0', async function(req, res) {
 
 app.use('/', express.static(__dirname + '/static'))
 
-
 app.get('/', function (req, res) {
-    console.log("Started at ");
-   // res.header('Content-type', 'text/html');
-    res.end('<h1>Hello, just World!</h1>');
+    res.render(__dirname + '/static/index.html');
 });
 
 
