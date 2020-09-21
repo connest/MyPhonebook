@@ -6,8 +6,8 @@ Persons has many contacts. Contacts has many phones.
 You can manage your contacts.
 
 ### Build
-`npm install
-npm run build`
+`npm install`
+`npm run build`
 
 ### Run
 `npm run start`
