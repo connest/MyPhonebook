@@ -258,6 +258,8 @@ async function getContactDataProcess(id, contactId)
     }
 }
 
+
+
 module.exports.getContacts = getContactsProcess;
 module.exports.deleteContact = deleteContactProcess;
 module.exports.createContact = createContactProcess;

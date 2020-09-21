@@ -62,3 +62,25 @@ gulp.task('build',
         )
     )
 );
+
+
+gulp.task('watch', function () {
+    gulp.watch(
+        './src/**/*.js',
+        {ignored: './src/clientsidescripts/**/*.js'},
+        gulp.series('build:js:server')
+    );
+    gulp.watch(
+        './src/clientsidescripts/*.js',
+        gulp.series('build:js:browser')
+    );
+    gulp.watch(
+        './src/**/*.css',
+        gulp.series('build:css')
+    );
+    gulp.watch(
+        './src/**/*.*',
+        {ignored: './src/**/*.{js,css}'},
+        gulp.series('build:static')
+    );6
+})

@@ -7,6 +7,7 @@ You can manage your contacts.
 
 ### Build
 `npm install`
+
 `npm run build`
 
 ### Run

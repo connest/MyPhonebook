@@ -5,6 +5,7 @@ const jsonrpc = require('jsonrpc-lite')
 const _contacts = document.getElementById('_contacts')
 const _add_contact = document.getElementById('_add_contact')
 const _logout = document.getElementById('_logout')
+const _export = document.getElementById('_export')
 
 function refreshContacts() {
     rpc_send('/api/v1.0', 'contact.get', {
@@ -89,6 +90,27 @@ function add_contact(contact) {
     contact_list_element.insertAdjacentElement('beforeend', contact_delete_button)
     _contacts.insertAdjacentElement('beforeend', contact_list_element);
 
+}
+
+_export.onclick = function () {
+    window.open('/api/v1.0/exportContacts', '_blank');
+    /*rpc_send('/api/v1.0', 'contact.export', {})
+        .then((response) => {
+        if (!response) {
+            console.warn("response is not recognized");
+            return;
+        }
+
+        try {
+            const parsedResponse = jsonrpc.parse(response + '');
+            const result = parsedResponse.payload.result
+
+            console.log(result)
+
+        } catch (e) {
+            console.warn(e);
+        }
+    });*/
 }
 
 

@@ -14,10 +14,34 @@ app.use(cookieParser());
 
 const { login } = require("./serversidescripts/Login-server")
 const { registration } = require("./serversidescripts/Registration-server")
-const { getContacts, getContactData, deleteContact, createContact} = require("./serversidescripts/Phonebook-server")
+const { getContacts, getContactData, deleteContact, createContact } = require("./serversidescripts/Phonebook-server")
+const { exportContacts } = require("./serversidescripts/vcard-server")
 const { deletePhone, addPhone } = require("./serversidescripts/Phone-server")
 
+async function download(res, filename, data) {
 
+
+    res.setHeader("Pragma", "public"); // required
+    res.setHeader("Expires", "0");
+    res.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0");
+    res.setHeader("Cache-Control", "private",false); // required for certain browsers
+    res.setHeader("Content-Type", "application/binary");
+
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Transfer-Encoding", "binary");
+    res.setHeader("Content-Length", data.length+'');
+
+    res.send(data)
+}
+app.get('/api/v1.0/exportContacts', async function (req, res) {
+    try {
+        await download(res, 'contacts.vcf', await exportContacts(req.cookies.userId));
+    } catch (e) {
+        console.warn('Error: ' + e)
+       res.status(500)
+        res.end();
+    }
+});
 
 app.post('/api/v1.0', async function(req, res) {
    try {
@@ -36,7 +60,6 @@ app.post('/api/v1.0', async function(req, res) {
        } else if(method === 'contact.delete') {
            result = await deleteContact(id, params.contactId);
        } else if(method === 'contact.create') {
-           console.log("cookie: " + JSON.stringify(req.cookies))
            result = await createContact(id, req.cookies.userId, params.name, params.surname, params.phones);
        } else if(method === 'contact.getWithPhones') {
            result = await getContactData(id, params.id);

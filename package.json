@@ -7,8 +7,8 @@
     "build": "gulp build",
     "start": "node build/index.js"
   },
-  "author": "Connest",
-  "license": "ISC",
+  "author": "Constantin Nesterov <connestprog@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",

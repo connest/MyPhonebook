@@ -2,7 +2,6 @@ const jsonrpc = require('jsonrpc-lite');
 
 const { Client } = require('pg')
 
-
 async function login(username, password)
 {
     const client = new Client({
