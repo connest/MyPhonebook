@@ -1,6 +1,7 @@
 const jsonrpc = require('jsonrpc-lite')
 const fs = require('fs')
 const https = require('https')
+const http = require('http')
 
 const express = require('express')
 const app = express()
@@ -88,9 +89,15 @@ app.get('/', function (req, res) {
 });
 
 
-let port = 6634
-console.log(`Started at https://localhost:${port}`);
-https.createServer({
-    key: fs.readFileSync(__dirname + '/certs/device.key'),
-    cert: fs.readFileSync(__dirname + '/certs/device.crt'),
-}, app).listen(port);
+
+let port = Number(process.argv[2]) || 6634
+if(process.argv[3] === 'https') {
+    console.log(`Started at https://localhost:${port}`);
+    https.createServer({
+        key: fs.readFileSync(__dirname + '/certs/device.key'),
+        cert: fs.readFileSync(__dirname + '/certs/device.crt'),
+    }, app).listen(port);
+} else {
+    console.log(`Started at http://localhost:${port}`);
+    http.createServer(app).listen(port);
+}

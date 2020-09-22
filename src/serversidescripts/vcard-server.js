@@ -147,9 +147,5 @@ async function importContacts(id, userId, data) {
     return jsonrpc.success(id, true);
 }
 
-async function importContactsProcess(id, userId, data) {
-    return await importContacts(id, userId, data);
-}
-
-module.exports.importContacts = importContactsProcess;
+module.exports.importContacts = importContacts;
 module.exports.exportContacts = exportContacts;
