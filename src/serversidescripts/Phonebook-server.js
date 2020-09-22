@@ -29,8 +29,6 @@ async function getContacts(userId, limit, offset)
         client.end();
 
         if(result) {
-            console.log(result.rows)
-
             return result.rows;
         }
 
@@ -119,7 +117,6 @@ async function addPhones(contactId, phones)
 
 
     try {
-        console.log(phones)
         const result = await client.query(
             'INSERT INTO "Phone" (id_contact, phone_number) SELECT * FROM UNNEST ($1::int[], $2::text[]) AS "ThisPhones"',
             [
@@ -145,7 +142,6 @@ async function addPhones(contactId, phones)
 
 async function createContact(userId, name, surname, phones)
 {
-    console.log(userId, name, surname, phones)
     const contact = await addContact(userId, name, surname);
     if(!contact)
         return false;
@@ -185,7 +181,6 @@ async function getContactPhones(connection, contactId) {
             'WHERE id_contact = $1;',
             [contactId]
         )
-        console.log(contactId)
         if(result) {
             if(result.rowCount > 0)
                 return result.rows

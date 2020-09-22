@@ -6,6 +6,7 @@ const _contacts = document.getElementById('_contacts')
 const _add_contact = document.getElementById('_add_contact')
 const _logout = document.getElementById('_logout')
 const _export = document.getElementById('_export')
+const _file_input = document.getElementById('_file_input')
 
 function refreshContacts() {
     rpc_send('/api/v1.0', 'contact.get', {
@@ -94,25 +95,38 @@ function add_contact(contact) {
 
 _export.onclick = function () {
     window.open('/api/v1.0/exportContacts', '_blank');
-    /*rpc_send('/api/v1.0', 'contact.export', {})
-        .then((response) => {
-        if (!response) {
-            console.warn("response is not recognized");
-            return;
-        }
-
-        try {
-            const parsedResponse = jsonrpc.parse(response + '');
-            const result = parsedResponse.payload.result
-
-            console.log(result)
-
-        } catch (e) {
-            console.warn(e);
-        }
-    });*/
 }
+_file_input.onchange = function () {
 
+
+    const fr=new FileReader();
+    fr.onload=function(){
+        // console.log(fr.result);
+        rpc_send('/api/v1.0', 'contact.import', {
+            data: fr.result,
+        }).then((response) => {
+            if (!response) {
+                console.warn("response is not recognized");
+                return;
+            }
+
+            try {
+                const parsedResponse = jsonrpc.parse(response + '');
+                const result = parsedResponse.payload.result
+
+                console.log(result)
+                if (result.isImported)
+                    refreshContacts();
+
+            } catch (e) {
+                console.warn(e);
+            }
+        });
+    }
+
+    fr.readAsText(this.files[0]);
+
+}
 
 _add_contact.onclick = function () {
     window.location.href = '/CreateContact.html'

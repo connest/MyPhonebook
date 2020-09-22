@@ -15,7 +15,7 @@ app.use(cookieParser());
 const { login } = require("./serversidescripts/Login-server")
 const { registration } = require("./serversidescripts/Registration-server")
 const { getContacts, getContactData, deleteContact, createContact } = require("./serversidescripts/Phonebook-server")
-const { exportContacts } = require("./serversidescripts/vcard-server")
+const { exportContacts, importContacts } = require("./serversidescripts/vcard-server")
 const { deletePhone, addPhone } = require("./serversidescripts/Phone-server")
 
 async function download(res, filename, data) {
@@ -63,6 +63,8 @@ app.post('/api/v1.0', async function(req, res) {
            result = await createContact(id, req.cookies.userId, params.name, params.surname, params.phones);
        } else if(method === 'contact.getWithPhones') {
            result = await getContactData(id, params.id);
+       } else if(method === 'contact.import') {
+           result = await importContacts(id, req.cookies.userId, params.data);
        } else if(method === 'phone.delete') {
            result = await deletePhone(id, params.phoneId);
        } else if(method === 'phone.add') {

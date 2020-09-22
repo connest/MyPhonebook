@@ -37,3 +37,13 @@ h4 {
     top: 10px;
     right: 10px;
 }
+
+#_import {
+    position: fixed;
+    top: 10px;
+    right: 100px;
+}
+#_file_input {
+    display: none;
+}
+
