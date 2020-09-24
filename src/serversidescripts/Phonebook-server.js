@@ -1,4 +1,3 @@
-const jsonrpc = require('jsonrpc-lite');
 
 const {query} = require('./db')
 
@@ -24,7 +23,7 @@ async function deleteContact(contactId) {
         'DELETE FROM "Contact" WHERE id_contact = $1;',
         [contactId]
     );
-    return result.rowCount === 1;
+    return {isDeleted: result.rowCount === 1};
 
 }
 
@@ -92,9 +91,7 @@ async function getContactPhones(contactId) {
 
 }
 
-async function getContactData(contactId) {
-
-
+async function getContactDataProcess(contactId) {
     const contactParams = await getContactDataName(contactId);
     if (!contactParams)
         return null;
@@ -111,36 +108,27 @@ async function getContactData(contactId) {
 }
 
 
-async function createContactProcess(id, userId, name, surname, phones) {
-    const contacts = await createContact(userId, name, surname, phones);
-    return jsonrpc.success(id, contacts);
-}
 
-async function getContactsProcess(id, userId, limit, offset) {
-    const contacts = await getContacts(userId, limit, offset);
-    return jsonrpc.success(id, contacts);
-}
 
-async function deleteContactProcess(id, contactId) {
-    const isDeleted = await deleteContact(contactId);
-    return jsonrpc.success(id, {isDeleted: isDeleted});
-}
 
-async function getContactDataProcess(id, contactId) {
-    const contactData = await getContactData(contactId);
+async function getContactData(contactId) {
+    const contactData = await getContactDataProcess(contactId);
     if (contactData) {
-        return jsonrpc.success(id, contactData);
+        return contactData;
     } else {
-        return jsonrpc.success(id, {
+        return {
             name: '<Unknown>',
             surname: '<Unknown>',
             phones: []
-        });
+        };
     }
 }
 
 
-module.exports.getContacts = getContactsProcess;
-module.exports.deleteContact = deleteContactProcess;
-module.exports.createContact = createContactProcess;
-module.exports.getContactData = getContactDataProcess;
+module.exports = {
+    getContacts,
+    deleteContact,
+    createContact,
+    getContactData,
+    getContactPhones
+}

@@ -11,8 +11,6 @@ const pool = new Pool({
     // connectionTimeoutMillis: 2000,
 })
 
-console.log("Connection ... ")
-
 const getClient = async function() {
     return pool.connect();
 }
@@ -21,7 +19,6 @@ const query = async function(query, params) {
     const client = await getClient();
     try {
         const result = await client.query(query, params);
-        // console.log("result: " + JSON.stringify(result))
         return {
             rows: result.rows,
             rowCount: result.rowCount

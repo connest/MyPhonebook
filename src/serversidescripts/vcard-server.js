@@ -1,8 +1,4 @@
-const jsonrpc = require('jsonrpc-lite');
-const {createContact} = require('./Phonebook-server');
-const {query} = require('./db')
-
-const {getPhones} = require('./Phone-server')
+const {createContact, getContacts, getContactPhones} = require('./Phonebook-server');
 
 
 async function vcard(name, surname, phones, dataObj) {
@@ -40,7 +36,6 @@ async function parseVcard(data) {
         for (let contactValue of contact) {
             if (contactValue[0].match(/^(NAME|N)$/)) {
                 [contactObj.name, contactObj.surname] = contactValue[1].split(';')
-
             } else {
                 contactObj.phones.push(contactValue[1])
             }
@@ -53,54 +48,46 @@ async function parseVcard(data) {
     return contacts;
 }
 
-async function getContacts(userId) {
-    const result = await query(
-        'SELECT id_contact, name, surname FROM "Contact" ' +
-        'WHERE id_person = $1',
-        [userId]
-    );
-
-    return result.rows;
-}
-
 
 async function exportContacts(userId) {
     if (!userId)
         throw new Error("Invalid userId");
 
+    const contacts = await getContacts(userId, 0, 0);
 
-    const contacts = await getContacts(userId);
     if (contacts.length > 0) {
         const dataObj = {data: ''}
         for (let contact of contacts) {
-            const phones = await getPhones(contact.id_contact);
+            const phones = await getContactPhones(contact.id_contact);
             await vcard(contact.name, contact.surname, phones, dataObj)
         }
 
-        return dataObj.data;
+        return { data: dataObj.data, success: true}
     }
 
+    return { data: [], success: false}
 }
 
 
-async function importContacts(id, userId, data) {
+async function importContacts(userId, data) {
     const contacts = await parseVcard(data)
 
     if (contacts.length < 1)
-        return jsonrpc.success(id, false);
-
+        return {isImported: false}
 
     let flagSuccess;
 
     //TODO create transaction
     for (let contact of contacts) {
-        flagSuccess = await createContact(id, userId, contact.name, contact.surname, contact.phones)
-        if (!flagSuccess.result)
-            return flagSuccess;
+        flagSuccess = await createContact(userId, contact.name, contact.surname, contact.phones)
+        if (!flagSuccess)
+            return {isImported: flagSuccess};
     }
 
-    return jsonrpc.success(id, {isImported: true});
+    return {isImported: true};
 }
 
-module.exports.importContacts = importContacts;
-module.exports.exportContacts = exportContacts;
+module.exports = {
+    importContacts,
+    exportContacts
+}
