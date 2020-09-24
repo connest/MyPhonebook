@@ -1,58 +1,35 @@
 const jsonrpc = require('jsonrpc-lite');
 
-const { Client } = require('pg')
+const { query } = require('./db')
 
-async function loginExists(connection, username) {
-    try {
-        const result = await connection.query(
+async function loginExists(username) {
+
+        const result = await query(
             'SELECT 1 FROM "Person" WHERE login = $1',
             [username]
         );
 
-         return result && result.rowCount === 1;
-    } catch (err) {
-        console.log(err.stack)
-        return false;
-    }
+         return result.rowCount > 0;
 }
 
-async function createPerson(connection, username, password) {
-    try {
-        const result = await connection.query(
+async function createPerson(username, password) {
+
+        const result = await query(
             'INSERT INTO "Person" (login, password) VALUES ($1, $2) RETURNING id_person;',
             [username, password]
         );
 
-        if(result) {
-            if(result.rowCount === 1) {
-                console.log(result.rows[0])
-                return result.rows[0].id_person
-            }
-        }
-        return -1;
-    } catch (err) {
-        console.log(err.stack)
-        return -1;
-    }
+        return result.rows[0].id_person || -1
+
+
 }
 
 async function registration(username, password)
 {
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
-
-    if(await loginExists(client, username)) {
-        client.end();
+    if(await loginExists(username)) {
        return -1;
     } else {
-        const result = await createPerson(client, username, password)
-        client.end();
+        const result = await createPerson( username, password)
         return result;
     }
 

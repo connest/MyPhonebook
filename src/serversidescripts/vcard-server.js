@@ -1,10 +1,9 @@
 const jsonrpc = require('jsonrpc-lite');
 const {createContact} = require('./Phonebook-server');
-const {Client} = require('pg')
+const {query} = require('./db')
 
-let matchesVcardTags = [
-    'VCARD', 'VERSION', 'AGENT', 'BDAY', 'BEGIN', 'END', 'FN', 'FULLNAME', 'GEO', 'MAILER', 'NICKNAME', 'NOTE', 'PRODID', 'REV', 'ROLE', 'TITLE', 'TZ', 'UID', 'URL', 'VERSION', 'CATEGORIES', 'NICKNAME', 'ORG', 'KEY', 'LOGO', 'PHOTO', 'SOUND', 'NAME', 'PROFILE', 'SOURCE', 'ADR', 'EMAIL', 'IMPP', 'LABEL', 'N', 'PHOTO', 'TEL'
-];
+const {getPhones} = require('./Phone-server')
+
 
 async function vcard(name, surname, phones, dataObj) {
     dataObj.data += "BEGIN:VCARD\r\nVERSION:3.0\r\n";
@@ -19,15 +18,6 @@ async function vcard(name, surname, phones, dataObj) {
 }
 
 
-/*
-    return array of objects
-    {
-        name: "",
-        surname: "",
-        phones: []
-     }
- */
-
 async function parseVcard(data) {
     const namesAndPhones = data.split('BEGIN:VCARD')
         .map(s => s.split(/(\n|\r\n)/)
@@ -41,14 +31,14 @@ async function parseVcard(data) {
     let contacts = [];
     for (let contact of namesAndPhones) {
 
-        const contactObj ={
+        const contactObj = {
             name: "<Unknown>",
             surname: "<Unknown>",
             phones: []
         };
 
-        for(let contactValue of contact) {
-            if(contactValue[0].match(/^(NAME|N)$/)) {
+        for (let contactValue of contact) {
+            if (contactValue[0].match(/^(NAME|N)$/)) {
                 [contactObj.name, contactObj.surname] = contactValue[1].split(';')
 
             } else {
@@ -63,66 +53,31 @@ async function parseVcard(data) {
     return contacts;
 }
 
-async function getContacts(connection, userId) {
-    const result = await connection.query(
+async function getContacts(userId) {
+    const result = await query(
         'SELECT id_contact, name, surname FROM "Contact" ' +
         'WHERE id_person = $1',
         [userId]
     );
 
-    if (result) {
-        return result.rows;
-    }
-
-    return [];
+    return result.rows;
 }
 
-async function getPhones(connection, contactId) {
-    const result = await connection.query(
-        'SELECT phone_number FROM "Phone" ' +
-        'WHERE id_contact = $1',
-        [contactId]
-    );
-
-    if (result) {
-        return result.rows;
-    }
-
-    return [];
-}
 
 async function exportContacts(userId) {
     if (!userId)
         throw new Error("Invalid userId");
 
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect();
 
-
-    try {
-        const contacts = await getContacts(client, userId);
-        if (contacts.length > 0) {
-            const dataObj = {data: ''}
-            for (let contact of contacts) {
-                const phones = await getPhones(client, contact.id_contact);
-                await vcard(contact.name, contact.surname, phones, dataObj)
-            }
-
-            return dataObj.data;
+    const contacts = await getContacts(userId);
+    if (contacts.length > 0) {
+        const dataObj = {data: ''}
+        for (let contact of contacts) {
+            const phones = await getPhones(contact.id_contact);
+            await vcard(contact.name, contact.surname, phones, dataObj)
         }
 
-
-    } catch (e) {
-        console.log(e.stack)
-        return 'Error while generate';
-    } finally {
-        client.end();
+        return dataObj.data;
     }
 
 }
@@ -131,20 +86,20 @@ async function exportContacts(userId) {
 async function importContacts(id, userId, data) {
     const contacts = await parseVcard(data)
 
-    if(contacts.length < 1)
+    if (contacts.length < 1)
         return jsonrpc.success(id, false);
 
 
     let flagSuccess;
 
     //TODO create transaction
-    for(let contact of contacts) {
+    for (let contact of contacts) {
         flagSuccess = await createContact(id, userId, contact.name, contact.surname, contact.phones)
-        if(!flagSuccess.result)
+        if (!flagSuccess.result)
             return flagSuccess;
     }
 
-    return jsonrpc.success(id, true);
+    return jsonrpc.success(id, {isImported: true});
 }
 
 module.exports.importContacts = importContacts;

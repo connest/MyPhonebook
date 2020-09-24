@@ -12,7 +12,7 @@ const _logout = document.getElementById('_logout')
 
 
 function getUrlVars() {
-    var vars = {};
+    let vars = {};
     window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
         vars[key] = value;
     });

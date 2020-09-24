@@ -65,6 +65,8 @@ gulp.task('build',
 
 
 gulp.task('watch', function () {
+    gulp.series('build')
+
     gulp.watch(
         './src/**/*.js',
         {ignored: './src/clientsidescripts/**/*.js'},
@@ -82,5 +84,5 @@ gulp.task('watch', function () {
         './src/**/*.*',
         {ignored: './src/**/*.{js,css}'},
         gulp.series('build:static')
-    );6
+    );
 })

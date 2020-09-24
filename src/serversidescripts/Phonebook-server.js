@@ -1,152 +1,66 @@
 const jsonrpc = require('jsonrpc-lite');
 
-const { Client } = require('pg')
+const {query} = require('./db')
 
 
-async function getContacts(userId, limit, offset)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
-
-    try {
-        const result = await client.query(
-            'SELECT id_contact, name, surname FROM "Contact" ' +
-            'WHERE id_person = $1 ' +
-            'LIMIT $2 ' +
-            'OFFSET $3',
-            [
-                userId,
-                (limit)? limit : null,
-                offset
-            ]
-        );
-        client.end();
-
-        if(result) {
-            return result.rows;
-        }
-
-        return [];
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return [];
-    }
-
-}
-async function deleteContact(contactId)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
-
-    try {
-        console.log("contact: " + JSON.stringify(contactId))
-        const result = await client.query(
-            'DELETE FROM "Contact" WHERE id_contact = $1;',
-            [contactId]
-        );
-        client.end();
-
-        if(result) {
-            return result.rowCount === 1;
-        }
-
-        return false;
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return false;
-    }
+async function getContacts(userId, limit, offset) {
+    const result = await query(
+        'SELECT id_contact, name, surname FROM "Contact" ' +
+        'WHERE id_person = $1 ' +
+        'LIMIT $2 ' +
+        'OFFSET $3',
+        [
+            userId,
+            (limit) ? limit : null,
+            offset
+        ]
+    );
+    return result.rows;
 
 }
 
-async function addContact(userId, name, surname)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
+async function deleteContact(contactId) {
+    const result = await query(
+        'DELETE FROM "Contact" WHERE id_contact = $1;',
+        [contactId]
+    );
+    return result.rowCount === 1;
 
-    try {
-        const result = await client.query(
-            'Insert into "Contact" (id_person,name,surname) ' +
-            'values ($1, $2, $3) ' +
-            'RETURNING id_contact;',
-            [userId, name, surname]
-        );
-        client.end();
-
-        if(result) {
-            if(result.rowCount === 1)
-                return result.rows[0]
-        }
-
-        return null;
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return null;
-    }
 }
-async function addPhones(contactId, phones)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
+
+async function addContact(userId, name, surname) {
+    const result = await query(
+        'INSERT INTO "Contact" (id_person,name,surname) ' +
+        'VALUES ($1, $2, $3) ' +
+        'RETURNING id_contact;',
+        [userId, name, surname]
+    );
+
+    return result.rows[0]
 
 
-    try {
-        const result = await client.query(
-            'INSERT INTO "Phone" (id_contact, phone_number) SELECT * FROM UNNEST ($1::int[], $2::text[]) AS "ThisPhones"',
-            [
-                Array(phones.length).fill(contactId),
-                phones,
-            ]
-        );
+}
 
-        client.end();
+async function addPhones(contactId, phones) {
+    const result = await query(
+        'INSERT INTO "Phone" (id_contact, phone_number) ' +
+        'SELECT * FROM UNNEST ($1::int[], $2::text[]) AS "ThisPhones"',
+        [
+            Array(phones.length).fill(contactId),
+            phones,
+        ]
+    );
 
-        if(result) {
-            return result.rowCount > 0;
-        }
-
-        return false;
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return false;
-    }
+    return result.rowCount > 0;
 }
 
 
-async function createContact(userId, name, surname, phones)
-{
+async function createContact(userId, name, surname, phones) {
     const contact = await addContact(userId, name, surname);
-    if(!contact)
+    if (!contact)
         return false;
 
-    if(phones.length > 0) {
+    if (phones.length > 0) {
         const phonesAdded = await addPhones(contact.id_contact, phones)
 
         return phonesAdded;
@@ -155,62 +69,38 @@ async function createContact(userId, name, surname, phones)
 }
 
 
-async function getContactDataName(connection, contactId) {
-    try {
-        const result = await connection.query(
-            'SELECT name, surname FROM "Contact" ' +
-            'WHERE id_contact = $1;',
-            [contactId]
-        )
-        if(result) {
-            if(result.rowCount === 1)
-                return result.rows[0]
-        }
-        return null;
+async function getContactDataName(contactId) {
 
-    } catch(err) {
-        console.log(err.stack)
-        connection.end();
-        return null;
-    }
+
+    const result = await query(
+        'SELECT name, surname FROM "Contact" ' +
+        'WHERE id_contact = $1;',
+        [contactId]
+    )
+    return result.rows[0]
+
 }
-async function getContactPhones(connection, contactId) {
-    try {
-        const result = await connection.query(
-            'SELECT id_phone, phone_number FROM "Phone" ' +
-            'WHERE id_contact = $1;',
-            [contactId]
-        )
-        if(result) {
-            if(result.rowCount > 0)
-                return result.rows
-        }
-        return null;
 
-    } catch(err) {
-        console.log(err.stack)
-        connection.end();
-        return null;
-    }
+async function getContactPhones(contactId) {
+
+    const result = await query(
+        'SELECT id_phone, phone_number FROM "Phone" ' +
+        'WHERE id_contact = $1;',
+        [contactId]
+    )
+    return result.rows;
+
 }
-async function getContactData(contactId)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
+
+async function getContactData(contactId) {
 
 
-    const contactParams = await getContactDataName(client, contactId);
-    if(!contactParams)
+    const contactParams = await getContactDataName(contactId);
+    if (!contactParams)
         return null;
 
 
-    const contactPhones= await getContactPhones(client, contactId);
+    const contactPhones = await getContactPhones(contactId);
 
     return {
         name: contactParams.name,
@@ -221,28 +111,24 @@ async function getContactData(contactId)
 }
 
 
-
-async function createContactProcess(id, userId, name, surname, phones)
-{
+async function createContactProcess(id, userId, name, surname, phones) {
     const contacts = await createContact(userId, name, surname, phones);
     return jsonrpc.success(id, contacts);
 }
 
-async function getContactsProcess(id, userId, limit, offset)
-{
+async function getContactsProcess(id, userId, limit, offset) {
     const contacts = await getContacts(userId, limit, offset);
     return jsonrpc.success(id, contacts);
 }
 
-async function deleteContactProcess(id, contactId)
-{
+async function deleteContactProcess(id, contactId) {
     const isDeleted = await deleteContact(contactId);
     return jsonrpc.success(id, {isDeleted: isDeleted});
 }
-async function getContactDataProcess(id, contactId)
-{
+
+async function getContactDataProcess(id, contactId) {
     const contactData = await getContactData(contactId);
-    if(contactData) {
+    if (contactData) {
         return jsonrpc.success(id, contactData);
     } else {
         return jsonrpc.success(id, {
@@ -252,7 +138,6 @@ async function getContactDataProcess(id, contactId)
         });
     }
 }
-
 
 
 module.exports.getContacts = getContactsProcess;

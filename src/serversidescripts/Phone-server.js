@@ -1,77 +1,47 @@
 const jsonrpc = require('jsonrpc-lite');
 
-const { Client } = require('pg')
+const { query } = require('./db');
 
+async function getPhones(contactId) {
+    const result = await query(
+        'SELECT phone_number FROM "Phone" ' +
+        'WHERE id_contact = $1',
+        [contactId]
+    );
 
-async function deletePhone(phoneId)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
-
-    try {
-
-        const result = await client.query(
-            'DELETE FROM "Phone" WHERE id_phone = $1;',
-            [phoneId]
-        );
-        client.end();
-
-        if(result)
-            return result.rowCount > 0;
-
-        return false;
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return false;
-    }
+        return result.rows;
 }
-async function addPhone(contactId, phone)
-{
-    const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'phonebook',
-        password: '1234',
-        port: 5432
-    });
-    client.connect()
 
-    try {
-        const result = await client.query(
+async function deletePhoneProcess(phoneId)
+{
+    const result = await query(
+        'DELETE FROM "Phone" WHERE id_phone = $1;',
+             [phoneId]);
+    return result.rowCount > 0
+}
+async function addPhoneProcess(contactId, phone)
+{
+    const result = await query(
             'INSERT INTO "Phone" (id_contact, phone_number) ' +
             'VALUES ($1, $2);',
             [contactId, phone]
         );
-        client.end();
 
-        if(result)
-            return result.rowCount === 1;
-
-        return false;
-    } catch (err) {
-        console.log(err.stack)
-        client.end();
-        return false;
-    }
+    return result.rowCount === 1;
 }
 
-async function deletePhoneProcess(id, phoneId)
+async function deletePhone(id, phoneId)
 {
-    const deleted = await deletePhone(phoneId);
+    const deleted = await deletePhoneProcess(phoneId);
+    console.log(deleted)
     return jsonrpc.success(id, {isDeleted: deleted});
 }
-async function addPhoneProcess(id, contactId, phone)
+async function addPhone(id, contactId, phone)
 {
-    const added = await addPhone(contactId, phone);
+    const added = await addPhoneProcess(contactId, phone);
     return jsonrpc.success(id, {isAdded: added});
 }
 
-module.exports.deletePhone = deletePhoneProcess;
-module.exports.addPhone = addPhoneProcess;
+module.exports.getPhones = getPhones;
+module.exports.deletePhone = deletePhone;
+module.exports.addPhone = addPhone;
